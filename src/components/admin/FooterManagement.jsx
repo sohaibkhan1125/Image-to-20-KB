@@ -10,13 +10,11 @@ import {
   FaDiscord, 
   FaTelegram, 
   FaWhatsapp,
-  FaGlobe,
-  FaLink
+  FaGlobe
 } from 'react-icons/fa';
 
 const FooterManagement = () => {
   const [socialMediaLinks, setSocialMediaLinks] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [newLink, setNewLink] = useState({

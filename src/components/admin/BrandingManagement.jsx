@@ -33,14 +33,11 @@ const BrandingManagement = () => {
     
     try {
       // Handle logo upload if there's a new file
-      let finalLogoUrl = branding.logoUrl;
-      
       if (branding.logoFile) {
         // Convert file to base64 for storage
         const reader = new FileReader();
         reader.onload = (e) => {
           const base64Logo = e.target.result;
-          finalLogoUrl = base64Logo;
           
           // Update branding with new logo
           const updatedBranding = {

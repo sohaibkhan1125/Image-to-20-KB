@@ -413,7 +413,6 @@ const ImageCompression = () => {
           const qualityCompression = () => {
             let minQuality = 0.1;
             let maxQuality = 1.0;
-            let bestQuality = 0.98; // Start with near-perfect quality
             let qualityIterations = 0;
             const maxQualityIterations = 40; // More iterations for precision
 
