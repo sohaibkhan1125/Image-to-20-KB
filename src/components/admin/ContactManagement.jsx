@@ -1,0 +1,118 @@
+import React, { useState, useEffect } from 'react';
+import Editor from './Editor';
+
+const ContactManagement = () => {
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // Load saved content on component mount
+  useEffect(() => {
+    const loadContent = () => {
+      const savedContent = localStorage.getItem('homePageContent');
+      if (savedContent) {
+        setContent(savedContent);
+      }
+    };
+
+    loadContent();
+  }, []);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setMessage('');
+    
+    try {
+      // Save content to localStorage
+      localStorage.setItem('homePageContent', content);
+      
+      // Dispatch event to update the home page
+      window.dispatchEvent(new CustomEvent('homePageContentUpdated', { 
+        detail: content 
+      }));
+      
+      setMessage('Content saved successfully! The home page will update immediately.');
+    } catch (error) {
+      setMessage('Error saving content. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClear = () => {
+    setContent('');
+    setMessage('');
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Contact Management</h2>
+        <div className="flex space-x-3">
+          <button
+            onClick={handleClear}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
+          >
+            Clear Content
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            {loading ? 'Saving...' : 'Save Content'}
+          </button>
+        </div>
+      </div>
+
+      {message && (
+        <div className={`p-4 rounded-lg ${
+          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+        }`}>
+          {message}
+        </div>
+      )}
+
+      {/* Rich Text Editor */}
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Home Page Content Editor</h3>
+        <p className="text-sm text-gray-600 mb-6">
+          Use the rich text editor below to create custom content that will appear on the home page below the image compression area.
+        </p>
+        
+        <div className="rounded-lg border bg-white p-2">
+          <Editor
+            value={content}
+            onChange={(data) => setContent(data)}
+          />
+        </div>
+      </div>
+
+      {/* Content Preview */}
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Content Preview</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          This is how your content will appear on the home page:
+        </p>
+        <div 
+          className="prose max-w-none p-4 bg-gray-50 rounded-lg border"
+          dangerouslySetInnerHTML={{ __html: content || '<p class="text-gray-500 italic">No content added yet. Use the editor above to create your content.</p>' }}
+        />
+      </div>
+
+      {/* Instructions */}
+      <div className="bg-blue-50 p-4 rounded-lg">
+        <h4 className="text-sm font-medium text-blue-900 mb-2">Instructions</h4>
+        <ul className="text-sm text-blue-700 space-y-1">
+          <li>• Use the rich text editor to create formatted content for your home page</li>
+          <li>• You can add headings, paragraphs, lists, links, images, and more</li>
+          <li>• The content will appear below the image compression area on the home page</li>
+          <li>• Changes are saved automatically and appear immediately on the website</li>
+          <li>• Use the preview section to see how your content will look</li>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default ContactManagement;
