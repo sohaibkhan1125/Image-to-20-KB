@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import Editor from './Editor';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'froala-editor/js/plugins.pkgd.min.js';
+import 'font-awesome/css/font-awesome.css';
+import 'froala-editor/js/third_party/font_awesome.min.js';
+
+const froalaConfig = {
+  key: 'nQE2uG3B1F1nmnspC5qpH3B3C11A6D5F5F5G4A-8A-7A2cefE3B2F3C2G2ilva1EAJLQCVLUVBf1NXNRSSATEXA-62WVLGKF2G2H2G1I4B3B2B8D7F6==',
+  licenseKey: 'nQE2uG3B1F1nmnspC5qpH3B3C11A6D5F5F5G4A-8A-7A2cefE3B2F3C2G2ilva1EAJLQCVLUVBf1NXNRSSATEXA-62WVLGKF2G2H2G1I4B3B2B8D7F6==',
+  placeholderText: 'Type or paste your content here!',
+  toolbarButtons: [
+    ['undo', 'redo', '|', 'bold', 'italic', 'underline', 'strikeThrough'],
+    ['paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent'],
+    ['insertLink', 'insertTable', 'quote', 'html']
+  ],
+  charCounterCount: true
+};
 
 const ContactManagement = () => {
   const [content, setContent] = useState('');
@@ -81,9 +98,11 @@ const ContactManagement = () => {
         </p>
         
         <div className="rounded-lg border bg-white p-2">
-          <Editor
-            value={content}
-            onChange={(data) => setContent(data)}
+          <FroalaEditorComponent
+            tag="textarea"
+            model={content}
+            onModelChange={setContent}
+            config={froalaConfig}
           />
         </div>
       </div>
