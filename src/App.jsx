@@ -11,16 +11,24 @@ import ReportIssue from './pages/ReportIssue';
 import AdminPanel from './components/admin/AdminPanel';
 import MaintenanceMode from './components/MaintenanceMode';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-import { 
-  FaFacebook, 
-  FaTwitter, 
-  FaLinkedin, 
-  FaInstagram, 
-  FaYoutube, 
-  FaGithub, 
-  FaTiktok, 
-  FaDiscord, 
-  FaTelegram, 
+import {
+  subscribeToBranding,
+  subscribeToHeroSection,
+  subscribeToHomePageContent,
+  subscribeToFooterLinks,
+  subscribeToGeneralSettings,
+  subscribeToMaintenanceMode
+} from './supabaseService';
+import {
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaInstagram,
+  FaYoutube,
+  FaGithub,
+  FaTiktok,
+  FaDiscord,
+  FaTelegram,
   FaWhatsapp,
   FaGlobe
 } from 'react-icons/fa';
@@ -34,35 +42,21 @@ const Navbar = () => {
   });
   const { currentTheme } = useTheme();
 
-  // Load branding settings and listen for updates
+  // Subscribe to branding settings from JSONBin
   useEffect(() => {
-    const loadBrandingSettings = () => {
-      const savedBranding = localStorage.getItem('brandingSettings');
-      if (savedBranding) {
-        try {
-          const parsed = JSON.parse(savedBranding);
-          setBranding(prev => ({ ...prev, ...parsed }));
-        } catch (error) {
-          console.error('Error loading branding settings:', error);
-        }
+    const unsubscribe = subscribeToBranding((data) => {
+      if (data) {
+        setBranding(prev => ({ ...prev, ...data }));
       }
-    };
+    });
 
-    loadBrandingSettings();
-
-    // Listen for branding updates from admin panel
-    const handleBrandingUpdate = (event) => {
-      setBranding(event.detail);
-    };
-
-    window.addEventListener('brandingUpdated', handleBrandingUpdate);
-    return () => window.removeEventListener('brandingUpdated', handleBrandingUpdate);
+    return () => unsubscribe();
   }, []);
 
   return (
-    <nav 
+    <nav
       className="shadow-lg fixed w-full top-0 z-50 transition-all duration-300"
-      style={{ 
+      style={{
         backgroundColor: currentTheme.colors.surface,
         color: currentTheme.colors.text
       }}
@@ -78,14 +72,14 @@ const Navbar = () => {
                 className="w-8 h-8 object-contain"
               />
             ) : (
-              <div 
+              <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ backgroundColor: currentTheme.colors.primary }}
               >
                 <span className="text-white font-bold text-sm">IC</span>
               </div>
             )}
-            <span 
+            <span
               className="text-xl font-bold"
               style={{ color: currentTheme.colors.text }}
             >
@@ -95,10 +89,10 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="transition-colors duration-200 font-medium"
-              style={{ 
+              style={{
                 color: currentTheme.colors.textSecondary,
                 '--hover-color': currentTheme.colors.primary
               }}
@@ -107,10 +101,10 @@ const Navbar = () => {
             >
               Home
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               className="transition-colors duration-200 font-medium"
-              style={{ 
+              style={{
                 color: currentTheme.colors.textSecondary,
                 '--hover-color': currentTheme.colors.primary
               }}
@@ -119,10 +113,10 @@ const Navbar = () => {
             >
               About
             </Link>
-            <Link 
-              to="/contact" 
+            <Link
+              to="/contact"
               className="transition-colors duration-200 font-medium"
-              style={{ 
+              style={{
                 color: currentTheme.colors.textSecondary,
                 '--hover-color': currentTheme.colors.primary
               }}
@@ -167,22 +161,14 @@ const HeroSection = () => {
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    const loadHero = () => {
-      const savedHeading = localStorage.getItem('heroHeading');
-      const savedDescription = localStorage.getItem('heroDescription');
-      if (savedHeading) setHeading(savedHeading);
-      if (savedDescription) setDescription(savedDescription);
-    };
+    const unsubscribe = subscribeToHeroSection((data) => {
+      if (data) {
+        setHeading(data.heading || '');
+        setDescription(data.description || '');
+      }
+    });
 
-    loadHero();
-
-    const handleHeroUpdate = (event) => {
-      setHeading(event.detail?.heading ?? '');
-      setDescription(event.detail?.description ?? '');
-    };
-
-    window.addEventListener('heroSectionUpdated', handleHeroUpdate);
-    return () => window.removeEventListener('heroSectionUpdated', handleHeroUpdate);
+    return () => unsubscribe();
   }, []);
 
   const defaultHeading = (
@@ -245,24 +231,13 @@ const HeroSection = () => {
 const CustomContent = () => {
   const [content, setContent] = useState('');
 
-  // Load custom content and listen for updates
+  // Subscribe to custom content from JSONBin
   useEffect(() => {
-    const loadContent = () => {
-      const savedContent = localStorage.getItem('homePageContent');
-      if (savedContent) {
-        setContent(savedContent);
-      }
-    };
+    const unsubscribe = subscribeToHomePageContent((data) => {
+      setContent(data || '');
+    });
 
-    loadContent();
-
-    // Listen for content updates from admin panel
-    const handleContentUpdate = (event) => {
-      setContent(event.detail);
-    };
-
-    window.addEventListener('homePageContentUpdated', handleContentUpdate);
-    return () => window.removeEventListener('homePageContentUpdated', handleContentUpdate);
+    return () => unsubscribe();
   }, []);
 
   // Don't render if no content
@@ -273,7 +248,7 @@ const CustomContent = () => {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div 
+        <div
           className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: content }}
         />
@@ -295,33 +270,15 @@ const ImageCompression = () => {
   const fileInputRef = useRef(null);
   const { currentTheme } = useTheme();
 
-  // Load admin settings for file size limit
+  // Subscribe to admin settings from JSONBin
   useEffect(() => {
-    const loadAdminSettings = () => {
-      const savedSettings = localStorage.getItem('adminSettings');
-      if (savedSettings) {
-        try {
-          const parsed = JSON.parse(savedSettings);
-          if (parsed.maxFileSize) {
-            setMaxFileSize(parsed.maxFileSize);
-          }
-        } catch (error) {
-          console.error('Error loading admin settings:', error);
-        }
+    const unsubscribe = subscribeToGeneralSettings((data) => {
+      if (data && data.maxFileSize) {
+        setMaxFileSize(data.maxFileSize);
       }
-    };
+    });
 
-    loadAdminSettings();
-
-    // Listen for admin settings updates
-    const handleSettingsUpdate = (event) => {
-      if (event.detail.maxFileSize) {
-        setMaxFileSize(event.detail.maxFileSize);
-      }
-    };
-
-    window.addEventListener('adminSettingsUpdated', handleSettingsUpdate);
-    return () => window.removeEventListener('adminSettingsUpdated', handleSettingsUpdate);
+    return () => unsubscribe();
   }, []);
 
   const handleFileSelect = (file) => {
@@ -329,13 +286,13 @@ const ImageCompression = () => {
       setError('Please select a valid image file (JPG, PNG, GIF, WebP).');
       return;
     }
-    
+
     // Check file size using admin setting
     if (file.size > maxFileSize * 1024 * 1024) {
       setError(`File size too large. Please select an image smaller than ${maxFileSize}MB.`);
       return;
     }
-    
+
     setError('');
     setSelectedFile(file);
     setCompressedImage(null);
@@ -356,7 +313,7 @@ const ImageCompression = () => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileSelect(e.dataTransfer.files[0]);
     }
@@ -367,12 +324,12 @@ const ImageCompression = () => {
       setError('Please select an image and enter a valid target size.');
       return;
     }
-    
+
     if (targetSize > 10000) {
       setError('Target size cannot exceed 10MB (10000KB).');
       return;
     }
-    
+
     if (targetSize < 1) {
       setError('Target size must be at least 1KB.');
       return;
@@ -392,15 +349,15 @@ const ImageCompression = () => {
         const originalWidth = img.width;
         const originalHeight = img.height;
         const targetSizeBytes = targetSize * 1024; // Convert KB to bytes
-        
+
         // Set canvas to original size for best quality
         canvas.width = originalWidth;
         canvas.height = originalHeight;
-        
+
         // Enable high-quality image rendering
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        
+
         // Draw original image
         ctx.drawImage(img, 0, 0, originalWidth, originalHeight);
 
@@ -408,7 +365,7 @@ const ImageCompression = () => {
           let bestResult = null;
           let iterations = 0;
           const maxIterations = 50; // Increased for more precision
-          
+
           // Phase 1: Ultra-high quality preservation with strict size limit
           const qualityCompression = () => {
             let minQuality = 0.1;
@@ -424,28 +381,28 @@ const ImageCompression = () => {
               }
 
               const quality = (minQuality + maxQuality) / 2;
-              
+
               // Determine optimal output format for quality preservation
               const originalFormat = selectedFile.type.toLowerCase();
               let outputFormat = 'image/jpeg';
-              
+
               // Use PNG for high quality to preserve transparency and avoid JPEG artifacts
               if (originalFormat === 'image/png' && quality > 0.9) {
                 outputFormat = 'image/png';
               } else if (originalFormat === 'image/webp' && quality > 0.8) {
                 outputFormat = 'image/webp';
               }
-              
+
               canvas.toBlob((blob) => {
                 const currentSizeBytes = blob.size;
                 const currentSizeKB = currentSizeBytes / 1024;
-                
+
                 // STRICT SIZE LIMIT: Never exceed target size
                 if (currentSizeBytes <= targetSizeBytes) {
                   // This result is valid - store it if it's better than current best
-                  if (!bestResult || 
-                      (currentSizeBytes > bestResult.size && currentSizeBytes <= targetSizeBytes) ||
-                      (bestResult.size > targetSizeBytes && currentSizeBytes <= targetSizeBytes)) {
+                  if (!bestResult ||
+                    (currentSizeBytes > bestResult.size && currentSizeBytes <= targetSizeBytes) ||
+                    (bestResult.size > targetSizeBytes && currentSizeBytes <= targetSizeBytes)) {
                     bestResult = {
                       blob,
                       size: currentSizeKB,
@@ -454,13 +411,13 @@ const ImageCompression = () => {
                       dimensions: { width: canvas.width, height: canvas.height }
                     };
                   }
-                  
+
                   // If we're very close to target size, we're done
                   if (currentSizeBytes >= targetSizeBytes * 0.95) {
                     finalizeCompression();
                     return;
                   }
-                  
+
                   // Try to get closer to target by increasing quality slightly
                   minQuality = quality;
                   if (quality < 0.98) {
@@ -476,11 +433,11 @@ const ImageCompression = () => {
 
                 qualityIterations++;
                 iterations++;
-                
+
                 // Update progress
                 const progress = Math.min((iterations / maxIterations) * 80, 75);
                 setCompressionProgress(progress);
-                
+
                 tryQualityCompression();
               }, outputFormat, quality);
             };
@@ -505,19 +462,19 @@ const ImageCompression = () => {
               scaleFactor = (minScale + maxScale) / 2;
               const newWidth = Math.max(originalWidth * scaleFactor, 10);
               const newHeight = Math.max(originalHeight * scaleFactor, 10);
-              
+
               canvas.width = newWidth;
               canvas.height = newHeight;
-              
+
               // Use highest quality settings for dimension scaling
               ctx.imageSmoothingEnabled = true;
               ctx.imageSmoothingQuality = 'high';
               ctx.drawImage(img, 0, 0, newWidth, newHeight);
-              
+
               // Try different quality levels with new dimensions
               const qualityLevels = [0.95, 0.9, 0.85, 0.8, 0.7, 0.6, 0.5];
               let qualityIndex = 0;
-              
+
               const tryQualityWithDimensions = () => {
                 if (qualityIndex >= qualityLevels.length) {
                   // Adjust scale factor
@@ -528,10 +485,10 @@ const ImageCompression = () => {
                   }
                   dimensionIterations++;
                   iterations++;
-                  
+
                   const progress = Math.min((iterations / maxIterations) * 100, 95);
                   setCompressionProgress(progress);
-                  
+
                   tryDimensionCompression();
                   return;
                 }
@@ -539,22 +496,22 @@ const ImageCompression = () => {
                 const quality = qualityLevels[qualityIndex];
                 const originalFormat = selectedFile.type.toLowerCase();
                 let outputFormat = 'image/jpeg';
-                
+
                 if (originalFormat === 'image/png' && quality > 0.9) {
                   outputFormat = 'image/png';
                 } else if (originalFormat === 'image/webp' && quality > 0.8) {
                   outputFormat = 'image/webp';
                 }
-                
+
                 canvas.toBlob((blob) => {
                   const currentSizeBytes = blob.size;
                   const currentSizeKB = currentSizeBytes / 1024;
-                  
+
                   // STRICT SIZE LIMIT: Only accept results under target
                   if (currentSizeBytes <= targetSizeBytes) {
-                    if (!bestResult || 
-                        (currentSizeBytes > bestResult.size && currentSizeBytes <= targetSizeBytes) ||
-                        (bestResult.size > targetSizeBytes && currentSizeBytes <= targetSizeBytes)) {
+                    if (!bestResult ||
+                      (currentSizeBytes > bestResult.size && currentSizeBytes <= targetSizeBytes) ||
+                      (bestResult.size > targetSizeBytes && currentSizeBytes <= targetSizeBytes)) {
                       bestResult = {
                         blob,
                         size: currentSizeKB,
@@ -564,12 +521,12 @@ const ImageCompression = () => {
                       };
                     }
                   }
-                  
+
                   qualityIndex++;
                   tryQualityWithDimensions();
                 }, outputFormat, quality);
               };
-              
+
               tryQualityWithDimensions();
             };
 
@@ -596,7 +553,7 @@ const ImageCompression = () => {
               const quality = optimizationQualityLevels[optIndex];
               const originalFormat = selectedFile.type.toLowerCase();
               let outputFormat = 'image/jpeg';
-              
+
               if (originalFormat === 'image/png' && quality > 0.95) {
                 outputFormat = 'image/png';
               } else if (originalFormat === 'image/webp' && quality > 0.9) {
@@ -613,10 +570,10 @@ const ImageCompression = () => {
               canvas.toBlob((blob) => {
                 const currentSizeBytes = blob.size;
                 const currentSizeKB = currentSizeBytes / 1024;
-                
+
                 // Only accept if it's under target and better quality than current best
-                if (currentSizeBytes <= targetSizeBytes && 
-                    (!bestResult || quality > bestResult.quality)) {
+                if (currentSizeBytes <= targetSizeBytes &&
+                  (!bestResult || quality > bestResult.quality)) {
                   bestResult = {
                     blob,
                     size: currentSizeKB,
@@ -625,7 +582,7 @@ const ImageCompression = () => {
                     dimensions: { width: canvas.width, height: canvas.height }
                   };
                 }
-                
+
                 optIndex++;
                 tryOptimization();
               }, outputFormat, quality);
@@ -637,7 +594,7 @@ const ImageCompression = () => {
           // Finalize compression with best result
           const finalizeCompression = () => {
             setCompressionProgress(100);
-            
+
             if (bestResult && bestResult.blob) {
               const url = URL.createObjectURL(bestResult.blob);
               setCompressedImage({
@@ -692,13 +649,12 @@ const ImageCompression = () => {
         <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
           {/* Upload Area */}
           <div
-            className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
-              dragActive 
-                ? 'border-blue-500 bg-blue-50' 
-                : selectedFile 
-                  ? 'border-green-500 bg-green-50' 
-                  : 'border-gray-300 hover:border-gray-400'
-            }`}
+            className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${dragActive
+              ? 'border-blue-500 bg-blue-50'
+              : selectedFile
+                ? 'border-green-500 bg-green-50'
+                : 'border-gray-300 hover:border-gray-400'
+              }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -745,12 +701,12 @@ const ImageCompression = () => {
                   </p>
                   <p className="text-sm text-gray-500">Supports JPG, PNG, GIF, WebP</p>
                   <p className="text-xs text-blue-600 mt-1">
-                    You can upload files up to {maxFileSize} MB 
+                    You can upload files up to {maxFileSize} MB
                   </p>
                 </div>
               </div>
             )}
-            
+
             <input
               ref={fileInputRef}
               type="file"
@@ -785,7 +741,7 @@ const ImageCompression = () => {
                   onClick={compressImage}
                   disabled={isCompressing || !targetSize}
                   className="px-8 py-3 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
-                  style={{ 
+                  style={{
                     backgroundColor: currentTheme.colors.primary,
                     '--hover-bg': currentTheme.colors.secondary
                   }}
@@ -813,7 +769,7 @@ const ImageCompression = () => {
                 <span>{Math.round(compressionProgress)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${compressionProgress}%` }}
                 ></div>
@@ -860,7 +816,7 @@ const ImageCompression = () => {
                   <button
                     onClick={downloadImage}
                     className="w-full py-3 text-white rounded-lg transition-all duration-200 font-medium"
-                    style={{ 
+                    style={{
                       backgroundColor: currentTheme.colors.success,
                       '--hover-bg': currentTheme.colors.success + 'DD'
                     }}
@@ -893,7 +849,7 @@ const getSocialMediaIcon = (iconType) => {
     telegram: FaTelegram,
     whatsapp: FaWhatsapp
   };
-  
+
   return socialMediaIcons[iconType] || FaGlobe;
 };
 
@@ -906,53 +862,26 @@ const Footer = () => {
   const [socialMediaLinks, setSocialMediaLinks] = useState([]);
   const { currentTheme } = useTheme();
 
-  // Load branding settings and social media links
+  // Subscribe to branding settings and social media links from Firestore
   useEffect(() => {
-    const loadBrandingSettings = () => {
-      const savedBranding = localStorage.getItem('brandingSettings');
-      if (savedBranding) {
-        try {
-          const parsed = JSON.parse(savedBranding);
-          setBranding(prev => ({ ...prev, ...parsed }));
-        } catch (error) {
-          console.error('Error loading branding settings:', error);
-        }
+    const unsubscribeBranding = subscribeToBranding((data) => {
+      if (data) {
+        setBranding(prev => ({ ...prev, ...data }));
       }
-    };
+    });
 
-    const loadSocialMediaLinks = () => {
-      const savedLinks = localStorage.getItem('socialMediaLinks');
-      if (savedLinks) {
-        try {
-          setSocialMediaLinks(JSON.parse(savedLinks));
-        } catch (error) {
-          console.error('Error loading social media links:', error);
-        }
-      }
-    };
+    const unsubscribeLinks = subscribeToFooterLinks((links) => {
+      setSocialMediaLinks(links);
+    });
 
-    loadBrandingSettings();
-    loadSocialMediaLinks();
-
-    // Listen for updates from admin panel
-    const handleBrandingUpdate = (event) => {
-      setBranding(event.detail);
-    };
-
-    const handleSocialMediaUpdate = (event) => {
-      setSocialMediaLinks(event.detail);
-    };
-
-    window.addEventListener('brandingUpdated', handleBrandingUpdate);
-    window.addEventListener('socialMediaUpdated', handleSocialMediaUpdate);
     return () => {
-      window.removeEventListener('brandingUpdated', handleBrandingUpdate);
-      window.removeEventListener('socialMediaUpdated', handleSocialMediaUpdate);
+      unsubscribeBranding();
+      unsubscribeLinks();
     };
   }, []);
 
   return (
-    <footer 
+    <footer
       className="text-white transition-all duration-300"
       style={{ backgroundColor: currentTheme.colors.primary }}
     >
@@ -967,7 +896,7 @@ const Footer = () => {
                   className="w-8 h-8 object-contain"
                 />
               ) : (
-                <div 
+                <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: currentTheme.colors.accent }}
                 >
@@ -977,7 +906,7 @@ const Footer = () => {
               <span className="text-xl font-bold">{branding.siteTitle}</span>
             </div>
             <p className="text-white mb-6 max-w-md">
-              Professional image compression tool that helps you reduce file sizes while maintaining quality. 
+              Professional image compression tool that helps you reduce file sizes while maintaining quality.
               Fast, secure, and completely free to use.
             </p>
             <div className="flex space-x-4">
@@ -1001,7 +930,7 @@ const Footer = () => {
               )}
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2">
@@ -1011,7 +940,7 @@ const Footer = () => {
               <li><Link to="/privacy" className="text-white hover:text-gray-200 transition-colors duration-200">Privacy Policy</Link></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Support</h3>
             <ul className="space-y-2">
@@ -1022,7 +951,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-white border-opacity-20 mt-8 pt-8 text-center">
           <p className="text-white">
             © 2025 ImageCompress. All rights reserved.
@@ -1037,23 +966,15 @@ const Footer = () => {
 function App() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
-  // Check for maintenance mode on component mount and listen for changes
+  // Subscribe to maintenance mode from Supabase
   useEffect(() => {
-    const checkMaintenanceMode = () => {
-      const isMaintenanceMode = localStorage.getItem('maintenanceMode') === 'true';
-      setMaintenanceMode(isMaintenanceMode);
-    };
+    const unsubscribe = subscribeToMaintenanceMode((enabled) => {
+      setMaintenanceMode(enabled);
+    });
 
-    checkMaintenanceMode();
-
-    // Listen for maintenance mode changes from admin panel
-    const handleMaintenanceModeChange = (event) => {
-      setMaintenanceMode(event.detail.enabled);
-    };
-
-    window.addEventListener('maintenanceModeChanged', handleMaintenanceModeChange);
-    return () => window.removeEventListener('maintenanceModeChanged', handleMaintenanceModeChange);
+    return () => unsubscribe();
   }, []);
+
 
   // Show maintenance mode if enabled (except for admin panel)
   if (maintenanceMode && !window.location.pathname.startsWith('/admin')) {

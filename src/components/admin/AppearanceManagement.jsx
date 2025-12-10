@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { getSelectedTheme, saveSelectedTheme } from '../../supabaseService';
+
 
 const AppearanceManagement = () => {
   const [selectedTheme, setSelectedTheme] = useState('default');
@@ -371,10 +373,17 @@ const AppearanceManagement = () => {
 
   // Load current theme on component mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('selectedTheme');
-    if (savedTheme) {
-      setSelectedTheme(savedTheme);
-    }
+    const loadTheme = async () => {
+      try {
+        const { themeId } = await getSelectedTheme();
+        if (themeId) {
+          setSelectedTheme(themeId);
+        }
+      } catch (error) {
+        console.error('Error loading theme:', error);
+      }
+    };
+    loadTheme();
   }, []);
 
   const handleThemeSelect = (themeId) => {
@@ -384,19 +393,20 @@ const AppearanceManagement = () => {
   const handleSave = async () => {
     setLoading(true);
     setMessage('');
-    
+
     try {
-      // Save selected theme to localStorage
-      localStorage.setItem('selectedTheme', selectedTheme);
-      
-      // Dispatch event to update the website theme
+      // Save selected theme to Supabase
       const selectedScheme = colorSchemes.find(scheme => scheme.id === selectedTheme);
-      window.dispatchEvent(new CustomEvent('themeChanged', { 
-        detail: selectedScheme 
+      await saveSelectedTheme(selectedTheme, selectedScheme);
+
+      // Dispatch event to update the website theme
+      window.dispatchEvent(new CustomEvent('themeChanged', {
+        detail: selectedScheme
       }));
-      
+
       setMessage('Theme applied successfully! The website will update immediately.');
     } catch (error) {
+      console.error('Error applying theme:', error);
       setMessage('Error applying theme. Please try again.');
     } finally {
       setLoading(false);
@@ -421,9 +431,8 @@ const AppearanceManagement = () => {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-        }`}>
+        <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+          }`}>
           {message}
         </div>
       )}
@@ -431,7 +440,7 @@ const AppearanceManagement = () => {
       {/* Current Theme Preview */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Current Theme Preview</h3>
-        <div 
+        <div
           className="p-6 rounded-lg border-2 border-dashed"
           style={{
             backgroundColor: getSelectedScheme().colors.background,
@@ -440,13 +449,13 @@ const AppearanceManagement = () => {
           }}
         >
           <div className="flex items-center space-x-3 mb-4">
-            <div 
+            <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ backgroundColor: getSelectedScheme().colors.primary }}
             >
               <span className="text-white font-bold text-sm">IC</span>
             </div>
-            <span 
+            <span
               className="text-xl font-bold"
               style={{ color: getSelectedScheme().colors.text }}
             >
@@ -454,15 +463,15 @@ const AppearanceManagement = () => {
             </span>
           </div>
           <div className="space-y-2">
-            <div 
+            <div
               className="px-4 py-2 rounded-lg"
               style={{ backgroundColor: getSelectedScheme().colors.primary, color: 'white' }}
             >
               Primary Button
             </div>
-            <div 
+            <div
               className="px-4 py-2 rounded-lg border"
-              style={{ 
+              style={{
                 backgroundColor: getSelectedScheme().colors.surface,
                 borderColor: getSelectedScheme().colors.border,
                 color: getSelectedScheme().colors.text
@@ -482,22 +491,21 @@ const AppearanceManagement = () => {
             <div
               key={scheme.id}
               onClick={() => handleThemeSelect(scheme.id)}
-              className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                selectedTheme === scheme.id
-                  ? 'border-blue-500 bg-blue-50 shadow-md'
-                  : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-              }`}
+              className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${selectedTheme === scheme.id
+                ? 'border-blue-500 bg-blue-50 shadow-md'
+                : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                }`}
             >
               <div className="flex items-center space-x-3 mb-3">
-                <div 
+                <div
                   className="w-6 h-6 rounded-full"
                   style={{ backgroundColor: scheme.colors.primary }}
                 ></div>
-                <div 
+                <div
                   className="w-6 h-6 rounded-full"
                   style={{ backgroundColor: scheme.colors.secondary }}
                 ></div>
-                <div 
+                <div
                   className="w-6 h-6 rounded-full"
                   style={{ backgroundColor: scheme.colors.accent }}
                 ></div>
@@ -513,7 +521,7 @@ const AppearanceManagement = () => {
       <div className="bg-blue-50 p-4 rounded-lg">
         <h4 className="text-sm font-medium text-blue-900 mb-2">Theme Information</h4>
         <p className="text-sm text-blue-700">
-          Selected theme will be applied instantly across the entire website including navbar, 
+          Selected theme will be applied instantly across the entire website including navbar,
           footer, buttons, input fields, and all other components. Changes are automatically saved.
         </p>
       </div>

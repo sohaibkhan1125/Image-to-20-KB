@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { subscribeToTheme } from '../supabaseService';
+
 
 const ThemeContext = createContext();
 
@@ -30,35 +32,30 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    // Load saved theme on mount
-    const savedTheme = localStorage.getItem('selectedTheme');
-    if (savedTheme) {
-      // Load the full theme data
-      const savedThemeData = localStorage.getItem('themeData');
-      if (savedThemeData) {
-        try {
-          setCurrentTheme(JSON.parse(savedThemeData));
-        } catch (error) {
-          console.error('Error loading theme data:', error);
-        }
+    // Subscribe to theme changes from Supabase
+    const unsubscribe = subscribeToTheme(({ themeId, themeData }) => {
+      if (themeData) {
+        setCurrentTheme(themeData);
       }
-    }
+    });
 
-    // Listen for theme changes from admin panel
+    // Listen for theme changes from admin panel (for immediate UI updates)
     const handleThemeChange = (event) => {
       const newTheme = event.detail;
       setCurrentTheme(newTheme);
-      localStorage.setItem('selectedTheme', newTheme.id);
-      localStorage.setItem('themeData', JSON.stringify(newTheme));
+      // Save to Supabase happens in AppearanceManagement component
     };
 
     window.addEventListener('themeChanged', handleThemeChange);
-    return () => window.removeEventListener('themeChanged', handleThemeChange);
+    return () => {
+      unsubscribe();
+      window.removeEventListener('themeChanged', handleThemeChange);
+    };
   }, []);
 
   const applyTheme = (theme) => {
     const root = document.documentElement;
-    
+
     // Apply CSS custom properties
     root.style.setProperty('--color-primary', theme.colors.primary);
     root.style.setProperty('--color-secondary', theme.colors.secondary);

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { getBranding, saveBranding } from '../../supabaseService';
+
 
 const BrandingManagement = () => {
   const [branding, setBranding] = useState({
@@ -8,68 +10,75 @@ const BrandingManagement = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [logoPreview, setLogoPreview] = useState('');
 
-  // Load branding settings from localStorage on component mount
+  // Load branding settings from Firestore on component mount
   useEffect(() => {
-    const savedBranding = localStorage.getItem('brandingSettings');
-    if (savedBranding) {
+    const loadBranding = async () => {
       try {
-        const parsed = JSON.parse(savedBranding);
-        setBranding(prev => ({ ...prev, ...parsed }));
-        if (parsed.logoUrl) {
-          setLogoPreview(parsed.logoUrl);
+        setInitialLoading(true);
+        const data = await getBranding();
+        if (data) {
+          setBranding(prev => ({ ...prev, ...data }));
+          if (data.logoUrl) {
+            setLogoPreview(data.logoUrl);
+          }
         }
       } catch (error) {
         console.error('Error loading branding settings:', error);
+        setMessage('Error loading branding settings. Please refresh the page.');
+      } finally {
+        setInitialLoading(false);
       }
-    }
+    };
+
+    loadBranding();
   }, []);
 
   const handleSave = async () => {
     setLoading(true);
     setMessage('');
-    
+
     try {
       // Handle logo upload if there's a new file
       if (branding.logoFile) {
         // Convert file to base64 for storage
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           const base64Logo = e.target.result;
-          
+
           // Update branding with new logo
           const updatedBranding = {
-            ...branding,
+            siteTitle: branding.siteTitle,
             logoUrl: base64Logo
           };
-          
-          // Save to localStorage
-          localStorage.setItem('brandingSettings', JSON.stringify(updatedBranding));
-          
-          // Dispatch events to update the website
-          window.dispatchEvent(new CustomEvent('brandingUpdated', { 
-            detail: updatedBranding 
-          }));
-          
-          setMessage('Branding settings saved successfully!');
-          setLoading(false);
+
+          try {
+            await saveBranding(updatedBranding);
+            setMessage('Branding settings saved successfully across all devices!');
+          } catch (error) {
+            console.error('Error saving branding:', error);
+            setMessage('Error saving branding settings. Please try again.');
+          } finally {
+            setLoading(false);
+          }
         };
         reader.readAsDataURL(branding.logoFile);
         return; // Exit early, the rest will be handled in the reader.onload
       }
-      
-      // Save branding settings to localStorage
-      localStorage.setItem('brandingSettings', JSON.stringify(branding));
-      
-      // Dispatch event to update the website
-      window.dispatchEvent(new CustomEvent('brandingUpdated', { 
-        detail: branding 
-      }));
-      
-      setMessage('Branding settings saved successfully!');
+
+      // Save branding settings to Firestore
+      const brandingToSave = {
+        siteTitle: branding.siteTitle,
+        logoUrl: branding.logoUrl
+      };
+
+      await saveBranding(brandingToSave);
+      setMessage('Branding settings saved successfully across all devices!');
     } catch (error) {
+      console.error('Error saving branding:', error);
       setMessage('Error saving branding settings. Please try again.');
     } finally {
       setLoading(false);
@@ -92,25 +101,25 @@ const BrandingManagement = () => {
         setMessage('Please upload a PNG, JPG, or SVG file.');
         return;
       }
-      
+
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         setMessage('Logo file size must be less than 2MB.');
         return;
       }
-      
+
       setBranding(prev => ({
         ...prev,
         logoFile: file
       }));
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setLogoPreview(e.target.result);
       };
       reader.readAsDataURL(file);
-      
+
       setMessage('');
     }
   };
@@ -138,16 +147,15 @@ const BrandingManagement = () => {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-        }`}>
+        <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+          }`}>
           {message}
         </div>
       )}
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Website Title</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -169,7 +177,7 @@ const BrandingManagement = () => {
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Website Logo</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

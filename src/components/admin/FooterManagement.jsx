@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  FaFacebook, 
-  FaTwitter, 
-  FaLinkedin, 
-  FaInstagram, 
-  FaYoutube, 
-  FaGithub, 
-  FaTiktok, 
-  FaDiscord, 
-  FaTelegram, 
+import {
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaInstagram,
+  FaYoutube,
+  FaGithub,
+  FaTiktok,
+  FaDiscord,
+  FaTelegram,
   FaWhatsapp,
   FaGlobe
 } from 'react-icons/fa';
+import { getFooterLinks, saveFooterLinks } from '../../supabaseService';
+
 
 const FooterManagement = () => {
   const [socialMediaLinks, setSocialMediaLinks] = useState([]);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [newLink, setNewLink] = useState({
@@ -69,21 +72,23 @@ const FooterManagement = () => {
 
   // Load social media links on component mount
   useEffect(() => {
-    const loadSocialMediaLinks = () => {
-      const savedLinks = localStorage.getItem('socialMediaLinks');
-      if (savedLinks) {
-        try {
-          setSocialMediaLinks(JSON.parse(savedLinks));
-        } catch (error) {
-          console.error('Error loading social media links:', error);
-        }
+    const loadSocialMediaLinks = async () => {
+      try {
+        setInitialLoading(true);
+        const links = await getFooterLinks();
+        setSocialMediaLinks(links);
+      } catch (error) {
+        console.error('Error loading social media links:', error);
+        setMessage('Error loading social media links. Please refresh the page.');
+      } finally {
+        setInitialLoading(false);
       }
     };
 
     loadSocialMediaLinks();
   }, []);
 
-  const handleAddLink = () => {
+  const handleAddLink = async () => {
     if (!newLink.name.trim() || !newLink.url.trim()) {
       setMessage('Please fill in both name and URL fields.');
       return;
@@ -105,16 +110,16 @@ const FooterManagement = () => {
     };
 
     const updatedLinks = [...socialMediaLinks, link];
-    setSocialMediaLinks(updatedLinks);
-    localStorage.setItem('socialMediaLinks', JSON.stringify(updatedLinks));
-    
-    // Dispatch event to update footer
-    window.dispatchEvent(new CustomEvent('socialMediaUpdated', { 
-      detail: updatedLinks 
-    }));
 
-    setNewLink({ name: '', url: '', icon: 'default' });
-    setMessage('Social media link added successfully!');
+    try {
+      await saveFooterLinks(updatedLinks);
+      setSocialMediaLinks(updatedLinks);
+      setNewLink({ name: '', url: '', icon: 'default' });
+      setMessage('Social media link added successfully!');
+    } catch (error) {
+      console.error('Error saving link:', error);
+      setMessage('Error saving link. Please try again.');
+    }
   };
 
   const handleEditLink = (id) => {
@@ -129,7 +134,7 @@ const FooterManagement = () => {
     }
   };
 
-  const handleUpdateLink = () => {
+  const handleUpdateLink = async () => {
     if (!newLink.name.trim() || !newLink.url.trim()) {
       setMessage('Please fill in both name and URL fields.');
       return;
@@ -143,36 +148,35 @@ const FooterManagement = () => {
       return;
     }
 
-    const updatedLinks = socialMediaLinks.map(link => 
-      link.id === editingId 
+    const updatedLinks = socialMediaLinks.map(link =>
+      link.id === editingId
         ? { ...link, name: newLink.name.trim(), url: newLink.url.trim(), icon: newLink.icon }
         : link
     );
 
-    setSocialMediaLinks(updatedLinks);
-    localStorage.setItem('socialMediaLinks', JSON.stringify(updatedLinks));
-    
-    // Dispatch event to update footer
-    window.dispatchEvent(new CustomEvent('socialMediaUpdated', { 
-      detail: updatedLinks 
-    }));
-
-    setNewLink({ name: '', url: '', icon: 'default' });
-    setEditingId(null);
-    setMessage('Social media link updated successfully!');
+    try {
+      await saveFooterLinks(updatedLinks);
+      setSocialMediaLinks(updatedLinks);
+      setNewLink({ name: '', url: '', icon: 'default' });
+      setEditingId(null);
+      setMessage('Social media link updated successfully!');
+    } catch (error) {
+      console.error('Error updating link:', error);
+      setMessage('Error updating link. Please try again.');
+    }
   };
 
-  const handleDeleteLink = (id) => {
+  const handleDeleteLink = async (id) => {
     const updatedLinks = socialMediaLinks.filter(link => link.id !== id);
-    setSocialMediaLinks(updatedLinks);
-    localStorage.setItem('socialMediaLinks', JSON.stringify(updatedLinks));
-    
-    // Dispatch event to update footer
-    window.dispatchEvent(new CustomEvent('socialMediaUpdated', { 
-      detail: updatedLinks 
-    }));
 
-    setMessage('Social media link deleted successfully!');
+    try {
+      await saveFooterLinks(updatedLinks);
+      setSocialMediaLinks(updatedLinks);
+      setMessage('Social media link deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting link:', error);
+      setMessage('Error deleting link. Please try again.');
+    }
   };
 
   const handleCancelEdit = () => {
@@ -187,9 +191,8 @@ const FooterManagement = () => {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-        }`}>
+        <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+          }`}>
           {message}
         </div>
       )}
@@ -199,7 +202,7 @@ const FooterManagement = () => {
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           {editingId ? 'Edit Social Media Link' : 'Add New Social Media Link'}
         </h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -213,7 +216,7 @@ const FooterManagement = () => {
               placeholder="e.g., Facebook, Instagram, LinkedIn"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               URL
@@ -251,7 +254,7 @@ const FooterManagement = () => {
           >
             {editingId ? 'Update Link' : 'Add Link'}
           </button>
-          
+
           {editingId && (
             <button
               onClick={handleCancelEdit}
@@ -266,7 +269,7 @@ const FooterManagement = () => {
       {/* Current Links */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Current Social Media Links</h3>
-        
+
         {socialMediaLinks.length === 0 ? (
           <p className="text-gray-500 text-center py-8">No social media links added yet.</p>
         ) : (
@@ -288,7 +291,7 @@ const FooterManagement = () => {
                     <p className="text-sm text-gray-500 truncate max-w-xs">{link.url}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEditLink(link.id)}

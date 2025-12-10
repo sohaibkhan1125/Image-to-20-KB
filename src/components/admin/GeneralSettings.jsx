@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { getGeneralSettings, saveGeneralSettings } from '../../supabaseService';
+
 
 const GeneralSettings = () => {
   const [settings, setSettings] = useState({
@@ -8,49 +10,38 @@ const GeneralSettings = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  // Load settings from localStorage on component mount
+  // Load settings from Firestore on component mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('adminSettings');
-    if (savedSettings) {
+    const loadSettings = async () => {
       try {
-        const parsed = JSON.parse(savedSettings);
-        setSettings(prev => ({ ...prev, ...parsed }));
+        setInitialLoading(true);
+        const data = await getGeneralSettings();
+        if (data) {
+          setSettings(prev => ({ ...prev, ...data }));
+        }
       } catch (error) {
         console.error('Error loading settings:', error);
+        setMessage('Error loading settings. Please refresh the page.');
+      } finally {
+        setInitialLoading(false);
       }
-    }
+    };
+
+    loadSettings();
   }, []);
 
   const handleSave = async () => {
     setLoading(true);
     setMessage('');
-    
+
     try {
-      // Save settings to localStorage
-      localStorage.setItem('adminSettings', JSON.stringify(settings));
-      
-      // Update the main website's file size limit
-      window.dispatchEvent(new CustomEvent('adminSettingsUpdated', { 
-        detail: { maxFileSize: settings.maxFileSize } 
-      }));
-      
-      // Handle maintenance mode
-      if (settings.maintenanceMode) {
-        localStorage.setItem('maintenanceMode', 'true');
-        window.dispatchEvent(new CustomEvent('maintenanceModeChanged', { 
-          detail: { enabled: true } 
-        }));
-      } else {
-        localStorage.removeItem('maintenanceMode');
-        window.dispatchEvent(new CustomEvent('maintenanceModeChanged', { 
-          detail: { enabled: false } 
-        }));
-      }
-      
-      setMessage('Settings saved successfully!');
+      await saveGeneralSettings(settings);
+      setMessage('Settings saved successfully across all devices!');
     } catch (error) {
+      console.error('Error saving settings:', error);
       setMessage('Error saving settings. Please try again.');
     } finally {
       setLoading(false);
@@ -78,16 +69,15 @@ const GeneralSettings = () => {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-        }`}>
+        <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+          }`}>
           {message}
         </div>
       )}
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Configuration</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -122,7 +112,7 @@ const GeneralSettings = () => {
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-medium text-gray-900 mb-4">System Controls</h3>
-        
+
         <div className="space-y-4">
           <label className="flex items-center">
             <input

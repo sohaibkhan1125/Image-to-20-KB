@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Text Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+        .save-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .preview-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .preview-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            color: #0c5460;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Admin Panel</h1>
+        <p class="subtitle">Manage your homepage text content</p>
+
+        <div class="info-box">
+            <p><strong>Note:</strong> You can use HTML tags for rich formatting (e.g., &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;, &lt;p&gt;, etc.)</p>
+        </div>
+
+        <label for="homepageText">Homepage Text Content:</label>
+        <textarea 
+            id="homepageText" 
+            placeholder="Enter your homepage text here... You can use HTML tags for formatting."
+        ></textarea>
+
+        <div class="button-container">
+            <button class="save-btn" id="saveBtn" onclick="saveToJSONBin()">
+                💾 Save Changes
+            </button>
+            <button class="preview-btn" onclick="loadCurrentText()">
+                🔄 Load Current Text
+            </button>
+        </div>
+
+        <div class="status" id="statusMessage"></div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - Replace these values
+        // ========================================
+        const JSONBIN_CONFIG = {
+            API_KEY: '$2a$10$/pZdORZ7HPLYVN2/3S1C0OPUbQ3l0m37u58VksfZHl15mfey4cGGa',
+            BIN_ID: '6933c41203998b11ea8da27c',
+            API_VERSION: 'v3'
+        };
+
+        // ========================================
+        // FUNCTION: Save text to JSONBin.io
+        // ========================================
+        async function saveToJSONBin() {
+            const textArea = document.getElementById('homepageText');
+            const saveBtn = document.getElementById('saveBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Get the text content from textarea
+            const homepageText = textArea.value.trim();
+            
+            // Validate that text is not empty
+            if (!homepageText) {
+                showStatus('error', '❌ Please enter some text before saving!');
+                return;
+            }
+
+            // Disable button and show loading status
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ Saving...';
+            showStatus('loading', '⏳ Saving your changes to JSONBin...');
+
+            try {
+                // Prepare the JSON data structure
+                const dataToSave = {
+                    homepageText: homepageText
+                };
+
+                // Make PUT request to JSONBin API
+                const response = await fetch(
+                    `https://api.jsonbin.io/${JSONBIN_CONFIG.API_VERSION}/b/${JSONBIN_CONFIG.BIN_ID}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                            'X-Bin-Meta': 'false'
+                        },
+                        body: JSON.stringify(dataToSave)
+                    }
+                );
+
+                // Check if request was successful
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // Show success message
+                showStatus('success', '✅ Homepage text updated successfully!');
+                
+                // Optional: Show browser alert
+                alert('Homepage text updated successfully!');
+
+            } catch (error) {
+                // Handle errors
+                console.error('Error saving to JSONBin:', error);
+                showStatus('error', `❌ Error: ${error.message}. Please try again.`);
+            } finally {
+                // Re-enable button
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 Save Changes';
+            }
+        }
+
+        // ========================================
+        // FUNCTION: Load current text from JSONBin
+        // ========================================
+        async function loadCurrentText() {
+            const textArea = document.getElementById('homepageText');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            showStatus('loading', '⏳ Loading current text from JSONBin...');
+
+            try {
+                // Make GET request to JSONBin API
+                const response = await fetch(
+                    `https://api.jsonbin.io/${JSONBIN_CONFIG.API_VERSION}/b/${JSONBIN_CONFIG.BIN_ID}/latest`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Extract the homepage text from the response
+                // JSONBin v3 returns data in 'record' property
+                const homepageText = data.record?.homepageText || '';
+                
+                // Populate the textarea
+                textArea.value = homepageText;
+                
+                showStatus('success', '✅ Current text loaded successfully!');
+
+            } catch (error) {
+                console.error('Error loading from JSONBin:', error);
+                showStatus('error', `❌ Error loading text: ${error.message}`);
+            }
+        }
+
+        // ========================================
+        // HELPER FUNCTION: Show status messages
+        // ========================================
+        function showStatus(type, message) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = `status ${type}`;
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+
+            // Auto-hide success/error messages after 5 seconds
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // ========================================
+        // AUTO-LOAD: Load current text on page load
+        // ========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCurrentText();
+        });
+    </script>
+</body>
+</html>

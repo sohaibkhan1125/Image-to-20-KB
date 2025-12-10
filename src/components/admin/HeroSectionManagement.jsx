@@ -1,31 +1,42 @@
 import React, { useEffect, useState } from 'react';
+import { getHeroSection, saveHeroSection } from '../../supabaseService';
+
 
 const HeroSectionManagement = () => {
   const [heading, setHeading] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const savedHeading = localStorage.getItem('heroHeading');
-    const savedDescription = localStorage.getItem('heroDescription');
-    if (savedHeading) setHeading(savedHeading);
-    if (savedDescription) setDescription(savedDescription);
+    const loadHeroSection = async () => {
+      try {
+        setInitialLoading(true);
+        const data = await getHeroSection();
+        if (data) {
+          setHeading(data.heading || '');
+          setDescription(data.description || '');
+        }
+      } catch (error) {
+        console.error('Error loading hero section:', error);
+        setMessage('Error loading hero section. Please refresh the page.');
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    loadHeroSection();
   }, []);
 
   const handleSave = async () => {
     setLoading(true);
     setMessage('');
     try {
-      localStorage.setItem('heroHeading', heading);
-      localStorage.setItem('heroDescription', description);
-      window.dispatchEvent(
-        new CustomEvent('heroSectionUpdated', {
-          detail: { heading, description }
-        })
-      );
-      setMessage('Hero section updated successfully!');
-    } catch (e) {
+      await saveHeroSection({ heading, description });
+      setMessage('Hero section updated successfully across all devices!');
+    } catch (error) {
+      console.error('Error saving hero section:', error);
       setMessage('Error saving hero section. Please try again.');
     } finally {
       setLoading(false);
@@ -37,6 +48,14 @@ const HeroSectionManagement = () => {
     setDescription('');
     setMessage('');
   };
+
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -60,9 +79,8 @@ const HeroSectionManagement = () => {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-        }`}>
+        <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+          }`}>
           {message}
         </div>
       )}

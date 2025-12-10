@@ -5,6 +5,8 @@ import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/js/plugins.pkgd.min.js';
 import 'font-awesome/css/font-awesome.css';
 import 'froala-editor/js/third_party/font_awesome.min.js';
+import { getHomePageContent, saveHomePageContent } from '../../supabaseService';
+
 
 const froalaConfig = {
   key: 'nQE2uG3B1F1nmnspC5qpH3B3C11A6D5F5F5G4A-8A-7A2cefE3B2F3C2G2ilva1EAJLQCVLUVBf1NXNRSSATEXA-62WVLGKF2G2H2G1I4B3B2B8D7F6==',
@@ -21,14 +23,23 @@ const froalaConfig = {
 const ContactManagement = () => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
 
   // Load saved content on component mount
   useEffect(() => {
-    const loadContent = () => {
-      const savedContent = localStorage.getItem('homePageContent');
-      if (savedContent) {
-        setContent(savedContent);
+    const loadContent = async () => {
+      try {
+        setInitialLoading(true);
+        const savedContent = await getHomePageContent();
+        if (savedContent) {
+          setContent(savedContent);
+        }
+      } catch (error) {
+        console.error('Error loading content:', error);
+        setMessage('Error loading content. Please refresh the page.');
+      } finally {
+        setInitialLoading(false);
       }
     };
 
@@ -38,18 +49,12 @@ const ContactManagement = () => {
   const handleSave = async () => {
     setLoading(true);
     setMessage('');
-    
+
     try {
-      // Save content to localStorage
-      localStorage.setItem('homePageContent', content);
-      
-      // Dispatch event to update the home page
-      window.dispatchEvent(new CustomEvent('homePageContentUpdated', { 
-        detail: content 
-      }));
-      
-      setMessage('Content saved successfully! The home page will update immediately.');
+      await saveHomePageContent(content);
+      setMessage('Content saved successfully! The home page will update immediately across all devices.');
     } catch (error) {
+      console.error('Error saving content:', error);
       setMessage('Error saving content. Please try again.');
     } finally {
       setLoading(false);
@@ -60,6 +65,14 @@ const ContactManagement = () => {
     setContent('');
     setMessage('');
   };
+
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -83,9 +96,8 @@ const ContactManagement = () => {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-        }`}>
+        <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+          }`}>
           {message}
         </div>
       )}
@@ -96,7 +108,7 @@ const ContactManagement = () => {
         <p className="text-sm text-gray-600 mb-6">
           Use the rich text editor below to create custom content that will appear on the home page below the image compression area.
         </p>
-        
+
         <div className="rounded-lg border bg-white p-2">
           <FroalaEditorComponent
             tag="textarea"
@@ -113,7 +125,7 @@ const ContactManagement = () => {
         <p className="text-sm text-gray-600 mb-4">
           This is how your content will appear on the home page:
         </p>
-        <div 
+        <div
           className="prose max-w-none p-4 bg-gray-50 rounded-lg border"
           dangerouslySetInnerHTML={{ __html: content || '<p class="text-gray-500 italic">No content added yet. Use the editor above to create your content.</p>' }}
         />
@@ -126,7 +138,7 @@ const ContactManagement = () => {
           <li>• Use the rich text editor to create formatted content for your home page</li>
           <li>• You can add headings, paragraphs, lists, links, images, and more</li>
           <li>• The content will appear below the image compression area on the home page</li>
-          <li>• Changes are saved automatically and appear immediately on the website</li>
+          <li>• Changes are saved to the cloud and appear across all devices and browsers</li>
           <li>• Use the preview section to see how your content will look</li>
         </ul>
       </div>

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAqZ6gDhXqyit16LS_ncobgn2Xhy_OljaE",
@@ -11,16 +12,19 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase with error handling
-let app, auth;
+let app, auth, db;
 
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  db = getFirestore(app);
 } catch (error) {
   console.error('Firebase initialization error:', error);
   app = null;
   auth = null;
+  db = null;
 }
 
-export { auth };
+export { auth, db };
 export default app;
+

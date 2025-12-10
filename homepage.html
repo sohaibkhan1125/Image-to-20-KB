@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage - Dynamic Text Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .content-section {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            min-height: 300px;
+        }
+
+        .content-title {
+            color: #667eea;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        #homepageText {
+            color: #333;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .loading::before {
+            content: '⏳';
+            margin-right: 10px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error state */
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Admin link */
+        .admin-link {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .admin-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .content-section {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .content-title {
+                font-size: 20px;
+            }
+
+            #homepageText {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 Welcome to Our Website</h1>
+            <p class="subtitle">Dynamic content powered by JSONBin.io</p>
+        </header>
+
+        <div class="content-section">
+            <h2 class="content-title">📄 Homepage Content</h2>
+            <div id="homepageText" class="loading">Loading content...</div>
+        </div>
+    </div>
+
+    <a href="admin-panel.html" class="admin-link">⚙️ Admin Panel</a>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - Replace these values
+        // ========================================
+        const JSONBIN_CONFIG = {
+            API_KEY: '$2a$10$/pZdORZ7HPLYVN2/3S1C0OPUbQ3l0m37u58VksfZHl15mfey4cGGa',
+            BIN_ID: '6933c41203998b11ea8da27c',
+            API_VERSION: 'v3'
+        };
+
+        // ========================================
+        // FUNCTION: Fetch and display homepage text
+        // ========================================
+        async function loadHomepageText() {
+            const homepageTextElement = document.getElementById('homepageText');
+
+            try {
+                // Make GET request to JSONBin API to fetch latest data
+                const response = await fetch(
+                    `https://api.jsonbin.io/${JSONBIN_CONFIG.API_VERSION}/b/${JSONBIN_CONFIG.BIN_ID}/latest`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'X-Master-Key': JSONBIN_CONFIG.API_KEY
+                        }
+                    }
+                );
+
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Extract the homepage text from the response
+                // JSONBin v3 returns data in 'record' property
+                const homepageText = data.record?.homepageText;
+
+                // Check if homepage text exists
+                if (!homepageText) {
+                    throw new Error('No homepage text found in the response');
+                }
+
+                // Display the text (supports HTML content)
+                homepageTextElement.innerHTML = homepageText;
+
+                // Remove loading class
+                homepageTextElement.classList.remove('loading');
+
+                console.log('✅ Homepage text loaded successfully!');
+
+            } catch (error) {
+                // Handle errors gracefully
+                console.error('❌ Error loading homepage text:', error);
+
+                // Display error message to user
+                homepageTextElement.classList.remove('loading');
+                homepageTextElement.classList.add('error');
+                homepageTextElement.innerHTML = `
+                    <strong>⚠️ Error Loading Content</strong><br>
+                    Unable to load homepage text. Please try again later.<br>
+                    <small>Error: ${error.message}</small>
+                `;
+            }
+        }
+
+        // ========================================
+        // AUTO-LOAD: Fetch text when page loads
+        // ========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadHomepageText();
+        });
+
+        // ========================================
+        // OPTIONAL: Auto-refresh every 30 seconds
+        // Uncomment the line below to enable auto-refresh
+        // ========================================
+        // setInterval(loadHomepageText, 30000);
+    </script>
+</body>
+
+</html>
