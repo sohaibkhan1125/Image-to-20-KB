@@ -1,17 +1,40 @@
 import { supabase } from "./supabaseClient";
 
 export async function saveHomepageContent(slug, content) {
+    console.log(`Saving content for slug: ${slug}`, content ? `Length: ${content.length}` : 'Empty content');
+
+    // Try to update first
     const { data, error } = await supabase
         .from("website_content")
-        .update({ content })
-        .eq("slug", slug);
+        .update({ content, updated_at: new Date().toISOString() })
+        .eq("slug", slug)
+        .select();
 
     if (error) {
-        console.error("Supabase Save Error:", error);
+        console.error("Supabase Save Error (Update):", error);
         return { success: false, error };
     }
 
-    return { success: true, data };
+    // If match found and updated, return success
+    if (data && data.length > 0) {
+        console.log("Update successful", data);
+        return { success: true, data };
+    }
+
+    // If no row found, insert new one
+    console.log("No existing row found, inserting new one...");
+    const { data: insertData, error: insertError } = await supabase
+        .from("website_content")
+        .insert([{ slug, content }])
+        .select();
+
+    if (insertError) {
+        console.error("Supabase Save Error (Insert):", insertError);
+        return { success: false, error: insertError };
+    }
+
+    console.log("Insert successful", insertData);
+    return { success: true, data: insertData };
 }
 
 export async function fetchHomepageContent(slug) {
