@@ -7,7 +7,7 @@ import GeneralSettings from './GeneralSettings';
 import BrandingManagement from './BrandingManagement';
 import AppearanceManagement from './AppearanceManagement';
 import FooterManagement from './FooterManagement';
-import ContactManagement from './ContactManagement';
+import ContentManagement from './ContentManagement';
 import ErrorBoundary from './ErrorBoundary';
 import HeroSectionManagement from './HeroSectionManagement';
 
@@ -45,8 +45,8 @@ const AdminPanel = () => {
         return <AppearanceManagement />;
       case 'footer':
         return <FooterManagement />;
-      case 'contact':
-        return <ContactManagement />;
+      case 'content':
+        return <ContentManagement />;
       case 'hero':
         return <HeroSectionManagement />;
       default:

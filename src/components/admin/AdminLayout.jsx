@@ -20,14 +20,14 @@ const AdminLayout = ({ children, user, currentPage, setCurrentPage }) => {
     { name: 'Appearance', icon: '🎨', page: 'appearance' },
     { name: 'Footer Management', icon: '🔗', page: 'footer' },
     { name: 'Hero Section Management', icon: '🚀', page: 'hero' },
-    { name: 'Contact Management', icon: '📝', page: 'contact' },
+    { name: 'Content Management', icon: '📝', page: 'content' },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         >
@@ -36,9 +36,8 @@ const AdminLayout = ({ children, user, currentPage, setCurrentPage }) => {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:shadow-none lg:flex lg:flex-col ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:shadow-none lg:flex lg:flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center space-x-3 min-w-0">
@@ -70,9 +69,8 @@ const AdminLayout = ({ children, user, currentPage, setCurrentPage }) => {
                     setSidebarOpen(false);
                   }
                 }}
-                className={`w-full flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-200 group ${
-                  currentPage === item.page ? 'bg-blue-50 text-blue-700 shadow-sm' : ''
-                }`}
+                className={`w-full flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-200 group ${currentPage === item.page ? 'bg-blue-50 text-blue-700 shadow-sm' : ''
+                  }`}
               >
                 <span className="text-xl mr-3 flex-shrink-0">{item.icon}</span>
                 <span className="font-medium text-sm truncate">{item.name}</span>
@@ -126,7 +124,7 @@ const AdminLayout = ({ children, user, currentPage, setCurrentPage }) => {
                 Admin Dashboard
               </h1>
             </div>
-            
+
             <div className="flex items-center space-x-4 flex-shrink-0">
               <div className="hidden sm:flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
