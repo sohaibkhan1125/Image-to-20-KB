@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
 import AdminAuth from './AdminAuth';
 import AdminLayout from './AdminLayout';
-import GeneralSettings from './GeneralSettings';
-import BrandingManagement from './BrandingManagement';
-import AppearanceManagement from './AppearanceManagement';
-import FooterManagement from './FooterManagement';
-import ContentManagement from './ContentManagement';
 import ErrorBoundary from './ErrorBoundary';
-import HeroSectionManagement from './HeroSectionManagement';
+
+// Lazy load admin tabs to reduce initial bundle size
+const GeneralSettings = lazy(() => import('./GeneralSettings'));
+const BrandingManagement = lazy(() => import('./BrandingManagement'));
+const AppearanceManagement = lazy(() => import('./AppearanceManagement'));
+const FooterManagement = lazy(() => import('./FooterManagement'));
+const ContentManagement = lazy(() => import('./ContentManagement'));
+const HeroSectionManagement = lazy(() => import('./HeroSectionManagement'));
+
+const TabLoader = () => (
+  <div className="flex justify-center items-center h-64">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 const AdminPanel = () => {
   const [user, setUser] = useState(null);
@@ -75,7 +83,9 @@ const AdminPanel = () => {
   return (
     <ErrorBoundary>
       <AdminLayout user={user} currentPage={currentPage} setCurrentPage={setCurrentPage}>
-        {renderPage()}
+        <Suspense fallback={<TabLoader />}>
+          {renderPage()}
+        </Suspense>
       </AdminLayout>
     </ErrorBoundary>
   );
