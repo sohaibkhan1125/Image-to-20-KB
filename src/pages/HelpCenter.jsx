@@ -1,4 +1,5 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 
 const HelpCenter = () => {
@@ -58,6 +59,11 @@ const HelpCenter = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Help Center"
+        description="Get help with ImageCompress. Find guides, troubleshooting tips, and support resources to optimize your images efficiently."
+        canonical="/help-center"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,7 +81,7 @@ const HelpCenter = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Quick Links */}
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Quick Access</h2>
@@ -112,7 +118,7 @@ const HelpCenter = () => {
                       <ul className="space-y-2">
                         {category.articles.map((article, articleIndex) => (
                           <li key={articleIndex}>
-                            <a 
+                            <a
                               href={article.link}
                               className="text-blue-600 hover:text-blue-800 text-sm hover:underline"
                             >
@@ -133,7 +139,7 @@ const HelpCenter = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">How to Use ImageCompress</h2>
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
               <div className="grid md:grid-cols-4 gap-6">
-                
+
                 <div className="text-center">
                   <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload Image</h3>
@@ -174,7 +180,7 @@ const HelpCenter = () => {
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Tips & Best Practices</h2>
             <div className="grid md:grid-cols-2 gap-8">
-              
+
               <div className="bg-green-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">✅ Do's</h3>
                 <ul className="space-y-3 text-gray-700">
@@ -234,7 +240,7 @@ const HelpCenter = () => {
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Common Issues & Solutions</h2>
             <div className="space-y-6">
-              
+
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Image not compressing to target size</h3>
                 <p className="text-gray-600 mb-3">
@@ -286,20 +292,20 @@ const HelpCenter = () => {
                 Can't find what you're looking for? Our support team is here to help you succeed.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link 
-                  to="/contact" 
+                <Link
+                  to="/contact"
                   className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
                 >
                   Contact Support
                 </Link>
-                <Link 
-                  to="/report" 
+                <Link
+                  to="/report"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Report Issue
                 </Link>
-                <Link 
-                  to="/" 
+                <Link
+                  to="/"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Try Our Tool

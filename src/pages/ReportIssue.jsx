@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 
 const ReportIssue = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const ReportIssue = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false);
@@ -40,7 +41,7 @@ const ReportIssue = () => {
         expectedResult: '',
         actualResult: ''
       });
-      
+
       // Reset status after 5 seconds
       setTimeout(() => {
         setSubmitStatus('');
@@ -70,6 +71,11 @@ const ReportIssue = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Report an Issue"
+        description="Encoutered a problem? Report bugs or technical issues with ImageCompress here. We value your feedback to make our tool better."
+        canonical="/report-issue"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,7 +93,7 @@ const ReportIssue = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Before Reporting */}
           <section className="mb-12">
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
@@ -96,14 +102,14 @@ const ReportIssue = () => {
                 Please check our FAQ and Help Center first, as your issue might already have a solution:
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="/faq" 
+                <a
+                  href="/faq"
                   className="inline-block bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors duration-200"
                 >
                   Check FAQ
                 </a>
-                <a 
-                  href="/help" 
+                <a
+                  href="/help"
                   className="inline-block border border-yellow-600 text-yellow-600 px-4 py-2 rounded-lg font-medium hover:bg-yellow-50 transition-colors duration-200"
                 >
                   Help Center
@@ -116,9 +122,9 @@ const ReportIssue = () => {
           <section className="mb-12">
             <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Issue Report Form</h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
-                
+
                 {/* Personal Information */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -299,7 +305,7 @@ const ReportIssue = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">What Happens Next?</h2>
             <div className="grid md:grid-cols-3 gap-8">
-              
+
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,20 +353,20 @@ const ReportIssue = () => {
                 For urgent issues or questions, don't hesitate to reach out directly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a 
-                  href="mailto:admin@imagecompress.com" 
+                <a
+                  href="mailto:admin@imagecompress.com"
                   className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
                 >
                   Email Support
                 </a>
-                <a 
-                  href="/contact" 
+                <a
+                  href="/contact"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Contact Form
                 </a>
-                <a 
-                  href="/" 
+                <a
+                  href="/"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Try Our Tool

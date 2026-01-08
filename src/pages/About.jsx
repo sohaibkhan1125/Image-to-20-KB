@@ -1,8 +1,14 @@
 import React from 'react';
+import SEO from '../components/SEO';
 
 const About = () => {
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="About Us"
+        description="Learn more about ImageCompress, the professional image optimization tool designed for quality and precision. Our mission is simple: better images, smaller files."
+        canonical="/about"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,18 +26,18 @@ const About = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Mission Section */}
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
             <div className="bg-gray-50 rounded-2xl p-8">
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                At ImageCompress, we believe that image optimization shouldn't compromise on quality. Our mission is to provide 
-                a powerful, user-friendly tool that allows you to compress images to exact target sizes while maintaining 
+                At ImageCompress, we believe that image optimization shouldn't compromise on quality. Our mission is to provide
+                a powerful, user-friendly tool that allows you to compress images to exact target sizes while maintaining
                 perfect visual fidelity.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Whether you're a web developer optimizing for faster load times, a content creator managing file sizes, 
+                Whether you're a web developer optimizing for faster load times, a content creator managing file sizes,
                 or a business professional preparing presentations, we're here to make image compression simple, accurate, and reliable.
               </p>
             </div>
@@ -41,7 +47,7 @@ const About = () => {
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Why Choose ImageCompress?</h2>
             <div className="grid md:grid-cols-2 gap-8">
-              
+
               <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300">
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,7 +56,7 @@ const About = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Precise Size Control</h3>
                 <p className="text-gray-600">
-                  Set exact target file sizes in KB and get results that never exceed your limit. 
+                  Set exact target file sizes in KB and get results that never exceed your limit.
                   Our advanced algorithm ensures perfect size accuracy.
                 </p>
               </div>
@@ -63,7 +69,7 @@ const About = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Perfect Quality Preservation</h3>
                 <p className="text-gray-600">
-                  Maintain 100% visual fidelity with no blur, color distortion, or quality loss. 
+                  Maintain 100% visual fidelity with no blur, color distortion, or quality loss.
                   Your images look identical to the original.
                 </p>
               </div>
@@ -76,7 +82,7 @@ const About = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Privacy & Security</h3>
                 <p className="text-gray-600">
-                  All compression happens locally in your browser. Your images never leave your device, 
+                  All compression happens locally in your browser. Your images never leave your device,
                   ensuring complete privacy and security.
                 </p>
               </div>
@@ -89,7 +95,7 @@ const About = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Lightning Fast</h3>
                 <p className="text-gray-600">
-                  Experience rapid compression with our optimized algorithms. 
+                  Experience rapid compression with our optimized algorithms.
                   Get results in seconds, not minutes.
                 </p>
               </div>
@@ -101,7 +107,7 @@ const About = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Advanced Technology</h2>
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
               <div className="grid md:grid-cols-3 gap-8">
-                
+
                 <div className="text-center">
                   <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <span className="text-2xl font-bold text-blue-600">AI</span>
@@ -139,7 +145,7 @@ const About = () => {
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Perfect For</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
+
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Web Developers</h3>
                 <p className="text-gray-600 text-sm">
@@ -188,7 +194,7 @@ const About = () => {
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Why Users Trust Us</h2>
             <div className="grid md:grid-cols-4 gap-8">
-              
+
               <div className="text-center">
                 <div className="text-4xl font-bold text-blue-600 mb-2">100%</div>
                 <p className="text-gray-600">Privacy Guaranteed</p>
@@ -218,8 +224,8 @@ const About = () => {
               <p className="text-xl mb-6 opacity-90">
                 Experience the power of precise image compression with perfect quality preservation.
               </p>
-              <a 
-                href="/" 
+              <a
+                href="/"
                 className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
               >
                 Start Compressing Now

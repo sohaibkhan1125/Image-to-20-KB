@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import MaintenanceMode from './components/MaintenanceMode';
+import SEO from './components/SEO';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import {
   subscribeToBranding,
@@ -992,36 +994,43 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <Router>
-        <div className={`min-h-screen transition-colors duration-300`} style={{ backgroundColor: 'var(--color-background, #F8FAFC)' }}>
-          <Navbar />
-          <main className="pt-16">
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={
-                  <>
-                    <HeroSection />
-                    <ImageCompression />
-                    <CustomContent />
-                  </>
-                } />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/help-center" element={<HelpCenter />} />
-                <Route path="/report-issue" element={<ReportIssue />} />
-                <Route path="/admin" element={<AdminPanel />} />
-              </Routes>
-            </Suspense>
-          </main>
-          <Footer />
-          <MaintenanceMode />
-        </div>
-      </Router>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider>
+        <Router>
+          <div className={`min-h-screen transition-colors duration-300`} style={{ backgroundColor: 'var(--color-background, #F8FAFC)' }}>
+            <Navbar />
+            <main className="pt-16">
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={
+                    <>
+                      <SEO
+                        title="Home"
+                        description="Compress images to any size in KB (20KB, 50KB, 100KB) while maintaining quality. Fast, secure, and free online image compressor."
+                        canonical="/"
+                      />
+                      <HeroSection />
+                      <ImageCompression />
+                      <CustomContent />
+                    </>
+                  } />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/help-center" element={<HelpCenter />} />
+                  <Route path="/report-issue" element={<ReportIssue />} />
+                  <Route path="/admin" element={<AdminPanel />} />
+                </Routes>
+              </Suspense>
+            </main>
+            <Footer />
+            <MaintenanceMode />
+          </div>
+        </Router>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

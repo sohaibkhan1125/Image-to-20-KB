@@ -1,8 +1,14 @@
 import React from 'react';
+import SEO from '../components/SEO';
 
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Privacy Policy"
+        description="Learn about our privacy practices and how we protect your data. At ImageCompress, all processing happens locally in your browser for 100% privacy."
+        canonical="/privacy-policy"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,13 +29,13 @@ const PrivacyPolicy = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Introduction */}
           <section className="mb-12">
             <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Commitment to Privacy</h2>
               <p className="text-gray-700 leading-relaxed">
-                At ImageCompress, we are committed to protecting your privacy and ensuring the security of your personal information. 
+                At ImageCompress, we are committed to protecting your privacy and ensuring the security of your personal information.
                 This Privacy Policy explains how we collect, use, and safeguard your data when you use our image compression service.
               </p>
             </div>
@@ -39,7 +45,7 @@ const PrivacyPolicy = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Key Privacy Principles</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              
+
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                   <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,9 +100,9 @@ const PrivacyPolicy = () => {
           {/* Detailed Privacy Policy */}
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Detailed Privacy Policy</h2>
-            
+
             <div className="space-y-8">
-              
+
               {/* Information We Don't Collect */}
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Information We Don't Collect</h3>
@@ -274,8 +280,8 @@ const PrivacyPolicy = () => {
                   <p className="opacity-90">Privacy Protection</p>
                 </div>
               </div>
-              <a 
-                href="/" 
+              <a
+                href="/"
                 className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
               >
                 Start Using Our Secure Tool

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,13 +22,13 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
-      
+
       // Reset status after 3 seconds
       setTimeout(() => {
         setSubmitStatus('');
@@ -37,6 +38,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Contact Us"
+        description="Have questions about image compression? Our support team is here to help. Contact us for technical support, business inquiries, or feedback."
+        canonical="/contact"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,22 +60,22 @@ const Contact = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           <div className="grid lg:grid-cols-2 gap-12">
-            
+
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Get in Touch</h2>
                 <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                  Have questions about our image compression service? Need technical support? 
+                  Have questions about our image compression service? Need technical support?
                   Or want to share feedback? We'd love to hear from you!
                 </p>
               </div>
 
               {/* Contact Methods */}
               <div className="space-y-6">
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,8 +85,8 @@ const Contact = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
                     <p className="text-gray-600 mb-2">Send us an email anytime</p>
-                    <a 
-                      href="mailto:admin@imagecompress.com" 
+                    <a
+                      href="mailto:admin@imagecompress.com"
                       className="text-blue-600 hover:text-blue-800 font-medium"
                     >
                       admin@imagecompress.com
@@ -118,7 +124,7 @@ const Contact = () => {
               <div className="bg-gray-50 rounded-2xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Frequently Asked Questions</h3>
                 <div className="space-y-4">
-                  
+
                   <div>
                     <h4 className="font-medium text-gray-900 mb-2">Is ImageCompress free to use?</h4>
                     <p className="text-gray-600 text-sm">
@@ -155,9 +161,9 @@ const Contact = () => {
             {/* Contact Form */}
             <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
-                
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -260,18 +266,18 @@ const Contact = () => {
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
               <h2 className="text-2xl font-bold mb-4">Need Immediate Help?</h2>
               <p className="text-lg mb-6 opacity-90">
-                For urgent technical issues or questions about our image compression service, 
+                For urgent technical issues or questions about our image compression service,
                 don't hesitate to reach out directly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a 
-                  href="mailto:admin@imagecompress.com" 
+                <a
+                  href="mailto:admin@imagecompress.com"
                   className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
                 >
                   Email Support
                 </a>
-                <a 
-                  href="/" 
+                <a
+                  href="/"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Try Our Tool

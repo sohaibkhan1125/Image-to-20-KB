@@ -1,8 +1,14 @@
 import React from 'react';
+import SEO from '../components/SEO';
 
 const TermsAndConditions = () => {
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Terms & Conditions"
+        description="Read the terms and conditions for using ImageCompress. By using our service, you agree to these terms regarding usage, rights, and limitations."
+        canonical="/terms-and-conditions"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,13 +29,13 @@ const TermsAndConditions = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Introduction */}
           <section className="mb-12">
             <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Agreement to Terms</h2>
               <p className="text-gray-700 leading-relaxed">
-                By accessing and using ImageCompress ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. 
+                By accessing and using ImageCompress ("the Service"), you accept and agree to be bound by the terms and provision of this agreement.
                 If you do not agree to abide by the above, please do not use this service.
               </p>
             </div>
@@ -41,7 +47,7 @@ const TermsAndConditions = () => {
             <div className="bg-gray-50 rounded-xl p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">What We Provide</h3>
               <p className="text-gray-700 mb-4">
-                ImageCompress is a free, web-based image compression tool that allows users to reduce the file size of their images 
+                ImageCompress is a free, web-based image compression tool that allows users to reduce the file size of their images
                 while maintaining visual quality. Our service operates entirely within your web browser and does not require registration.
               </p>
               <ul className="space-y-2 text-gray-700">
@@ -69,7 +75,7 @@ const TermsAndConditions = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">User Responsibilities</h2>
             <div className="space-y-6">
-              
+
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Acceptable Use</h3>
                 <p className="text-gray-700 mb-4">You agree to use our service only for lawful purposes and in accordance with these terms. You agree not to:</p>
@@ -96,7 +102,7 @@ const TermsAndConditions = () => {
               <div className="bg-green-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Image Ownership</h3>
                 <p className="text-gray-700 mb-4">
-                  You retain full ownership and rights to all images you upload and process through our service. 
+                  You retain full ownership and rights to all images you upload and process through our service.
                   We do not claim any ownership rights to your images.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -120,7 +126,7 @@ const TermsAndConditions = () => {
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">No Guarantees</h3>
               <p className="text-gray-700 mb-4">
-                While we strive to provide reliable service, we cannot guarantee that our service will be available at all times. 
+                While we strive to provide reliable service, we cannot guarantee that our service will be available at all times.
                 The service is provided "as is" without warranties of any kind.
               </p>
               <ul className="space-y-2 text-gray-700">
@@ -148,7 +154,7 @@ const TermsAndConditions = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Service Limitations</h2>
             <div className="space-y-6">
-              
+
               <div className="bg-red-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">File Size Limits</h3>
                 <p className="text-gray-700 mb-4">To ensure optimal performance, we have implemented the following limitations:</p>
@@ -253,7 +259,7 @@ const TermsAndConditions = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Disclaimers</h2>
             <div className="space-y-6">
-              
+
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">No Warranties</h3>
                 <p className="text-gray-700 mb-4">
@@ -278,11 +284,11 @@ const TermsAndConditions = () => {
               <div className="bg-red-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Limitation of Liability</h3>
                 <p className="text-gray-700 mb-4">
-                  In no event shall ImageCompress be liable for any direct, indirect, incidental, special, or consequential damages 
+                  In no event shall ImageCompress be liable for any direct, indirect, incidental, special, or consequential damages
                   arising out of or in connection with the use of our service.
                 </p>
                 <p className="text-gray-700 text-sm">
-                  This includes but is not limited to: loss of data, loss of profits, business interruption, or any other 
+                  This includes but is not limited to: loss of data, loss of profits, business interruption, or any other
                   commercial damages or losses.
                 </p>
               </div>
@@ -296,7 +302,7 @@ const TermsAndConditions = () => {
             <div className="bg-blue-50 rounded-xl p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Service Ownership</h3>
               <p className="text-gray-700 mb-4">
-                The ImageCompress service, including its design, functionality, and underlying technology, is owned by us. 
+                The ImageCompress service, including its design, functionality, and underlying technology, is owned by us.
                 You may not copy, modify, or distribute our service without permission.
               </p>
               <div className="grid md:grid-cols-2 gap-4">
@@ -318,7 +324,7 @@ const TermsAndConditions = () => {
             <div className="bg-purple-50 rounded-xl p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Service Termination</h3>
               <p className="text-gray-700 mb-4">
-                We reserve the right to terminate or suspend access to our service at any time, with or without notice, 
+                We reserve the right to terminate or suspend access to our service at any time, with or without notice,
                 for any reason including violation of these terms.
               </p>
               <ul className="space-y-2 text-gray-700">
@@ -344,7 +350,7 @@ const TermsAndConditions = () => {
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Modification of Terms</h3>
               <p className="text-gray-700 mb-4">
-                We reserve the right to modify these terms at any time. Changes will be posted on this page with an updated revision date. 
+                We reserve the right to modify these terms at any time. Changes will be posted on this page with an updated revision date.
                 Your continued use of the service after changes constitutes acceptance of the new terms.
               </p>
               <p className="text-gray-700">
@@ -377,7 +383,7 @@ const TermsAndConditions = () => {
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
               <h2 className="text-3xl font-bold mb-4">Governing Law</h2>
               <p className="text-xl mb-6 opacity-90">
-                These terms are governed by and construed in accordance with applicable laws. 
+                These terms are governed by and construed in accordance with applicable laws.
                 By using our service, you agree to these terms and conditions.
               </p>
               <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -394,8 +400,8 @@ const TermsAndConditions = () => {
                   <p className="opacity-90">Legal Compliance</p>
                 </div>
               </div>
-              <a 
-                href="/" 
+              <a
+                href="/"
                 className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
               >
                 Start Using Our Service

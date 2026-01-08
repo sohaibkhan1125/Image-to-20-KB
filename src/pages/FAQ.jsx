@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 
 const FAQ = () => {
   const [openItems, setOpenItems] = useState({});
@@ -75,6 +76,11 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Frequently Asked Questions"
+        description="Find answers to common questions about ImageCompress, privacy, security, and how to optimize your images for better results."
+        canonical="/faq"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,7 +98,7 @@ const FAQ = () => {
       {/* Main Content */}
       <div className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Quick Stats */}
           <section className="mb-12">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
@@ -130,10 +136,10 @@ const FAQ = () => {
                   >
                     <h3 className="text-lg font-semibold text-gray-900 pr-4">{item.question}</h3>
                     <div className="flex-shrink-0">
-                      <svg 
+                      <svg
                         className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${openItems[index] ? 'rotate-180' : ''}`}
-                        fill="none" 
-                        stroke="currentColor" 
+                        fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -156,7 +162,7 @@ const FAQ = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Browse by Category</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              
+
               <div className="bg-blue-50 rounded-xl p-6">
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,7 +219,7 @@ const FAQ = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Pro Tips</h2>
             <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8">
               <div className="grid md:grid-cols-2 gap-8">
-                
+
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">For Best Results</h3>
                   <ul className="space-y-3 text-gray-700">
@@ -270,20 +276,20 @@ const FAQ = () => {
                 Can't find the answer you're looking for? Our support team is here to help!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a 
-                  href="mailto:admin@imagecompress.com" 
+                <a
+                  href="mailto:admin@imagecompress.com"
                   className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
                 >
                   Email Support
                 </a>
-                <a 
-                  href="/contact" 
+                <a
+                  href="/contact"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Contact Form
                 </a>
-                <a 
-                  href="/" 
+                <a
+                  href="/"
                   className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors duration-200"
                 >
                   Try Our Tool
