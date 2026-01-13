@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://imageto20kb.com/sitemap.xml
+Sitemap: https://jpg20kb.net/sitemap.xml
