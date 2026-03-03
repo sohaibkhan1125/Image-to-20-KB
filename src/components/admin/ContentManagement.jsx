@@ -29,6 +29,91 @@ const ContentManagement = () => {
         }
     }, []);
 
+    const triggerToast = useCallback((msg, type = 'success') => {
+        setToastMessage(msg);
+        setToastType(type);
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    }, []);
+
+    const updateStats = useCallback(() => {
+        if (!quillRef.current) return;
+        const text = quillRef.current.getText();
+        const words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
+        const chars = text.length > 1 ? text.length - 1 : 0;
+        setWordCount(words);
+        setCharCount(chars);
+    }, []);
+
+    const loadContent = useCallback(async () => {
+        try {
+            const saved = await getHomePageContent();
+            if (saved) {
+                if (quillRef.current) {
+                    quillRef.current.clipboard.dangerouslyPasteHTML(saved);
+                    updateStats();
+                }
+            }
+        } catch (error) {
+            console.error("Error loading content:", error);
+            triggerToast("Error loading content from server", "error");
+        }
+    }, [updateStats, triggerToast]);
+
+    const saveContent = useCallback(async (isAuto = false) => {
+        if (!quillRef.current) return;
+
+        try {
+            const content = quillRef.current.root.innerHTML;
+            await saveHomePageContent(content);
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (isAuto) {
+                setLastSaved(`Autosaved at ${timeString}`);
+            } else {
+                setLastSaved(`Saved at ${timeString}`);
+                triggerToast('Document saved successfully');
+            }
+        } catch (error) {
+            console.error("Error saving content:", error);
+            if (!isAuto) triggerToast("Error saving content to server", "error");
+        }
+    }, [triggerToast]);
+
+    const handleAutoSave = useCallback(() => {
+        saveContent(true);
+    }, [saveContent]);
+
+    const imageHandler = useCallback(() => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    }, []);
+
+    const saveImage = useCallback((file) => {
+        if (!quillRef.current) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const range = quillRef.current.getSelection(true);
+            quillRef.current.insertEmbed(range.index, 'image', reader.result);
+            quillRef.current.setSelection(range.index + 1);
+            triggerToast('Image inserted successfully');
+        };
+    }, [triggerToast]);
+
+    const handleFileChange = useCallback((e) => {
+        const file = e.target.files[0];
+        if (file && /^image\//.test(file.type)) {
+            saveImage(file);
+        } else if (file) {
+            triggerToast('Please select a valid image file', 'error');
+        }
+    }, [saveImage, triggerToast]);
+
     // Initialize Quill
     useEffect(() => {
         if (!editorRef.current) return;
@@ -97,80 +182,7 @@ const ContentManagement = () => {
         };
     }, [handleAutoSave, loadContent, updateStats]);
 
-    const imageHandler = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file && /^image\//.test(file.type)) {
-            saveImage(file);
-        } else if (file) {
-            triggerToast('Please select a valid image file', 'error');
-        }
-    };
-
-    const saveImage = (file) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            const range = quillRef.current.getSelection(true);
-            quillRef.current.insertEmbed(range.index, 'image', reader.result);
-            quillRef.current.setSelection(range.index + 1);
-            triggerToast('Image inserted successfully');
-        };
-    };
-
-    const updateStats = useCallback(() => {
-        if (!quillRef.current) return;
-        const text = quillRef.current.getText();
-        const words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
-        const chars = text.length > 1 ? text.length - 1 : 0;
-        setWordCount(words);
-        setCharCount(chars);
-    }, []);
-
-    const loadContent = useCallback(async () => {
-        try {
-            const saved = await getHomePageContent();
-            if (saved) {
-                if (quillRef.current) {
-                    quillRef.current.clipboard.dangerouslyPasteHTML(saved);
-                    updateStats();
-                }
-            }
-        } catch (error) {
-            console.error("Error loading content:", error);
-            triggerToast("Error loading content from server", "error");
-        }
-    }, [updateStats]);
-
-    const saveContent = useCallback(async (isAuto = false) => {
-        if (!quillRef.current) return;
-
-        try {
-            const content = quillRef.current.root.innerHTML;
-            await saveHomePageContent(content);
-
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            if (isAuto) {
-                setLastSaved(`Autosaved at ${timeString}`);
-            } else {
-                setLastSaved(`Saved at ${timeString}`);
-                triggerToast('Document saved successfully');
-            }
-        } catch (error) {
-            console.error("Error saving content:", error);
-            if (!isAuto) triggerToast("Error saving content to server", "error");
-        }
-    }, []);
-
-    const handleAutoSave = useCallback(() => {
-        saveContent(true);
-    }, [saveContent]);
 
     // Text to Code Logic
     const convertToCode = () => {
@@ -207,14 +219,6 @@ const ContentManagement = () => {
         return formatted.substring(1, formatted.length - 3);
     };
 
-    const triggerToast = (msg, type = 'success') => {
-        setToastMessage(msg);
-        setToastType(type);
-        setShowToast(true);
-        setTimeout(() => {
-            setShowToast(false);
-        }, 3000);
-    };
 
     const clearEditor = () => {
         if (window.confirm('Are you sure you want to clear the editor? This cannot be undone.')) {
