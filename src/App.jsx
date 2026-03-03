@@ -35,6 +35,8 @@ const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const ReportIssue = lazy(() => import('./pages/ReportIssue'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
 const AdminPanel = lazy(() => import('./components/admin/AdminPanel'));
 
 // Loading Fallback
@@ -136,6 +138,18 @@ const Navbar = () => {
             >
               Contact
             </Link>
+            <Link
+              to="/blog"
+              className="transition-colors duration-200 font-medium"
+              style={{
+                color: currentTheme.colors.textSecondary,
+                '--hover-color': currentTheme.colors.primary
+              }}
+              onMouseEnter={(e) => e.target.style.color = currentTheme.colors.primary}
+              onMouseLeave={(e) => e.target.style.color = currentTheme.colors.textSecondary}
+            >
+              Blog
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -158,6 +172,7 @@ const Navbar = () => {
               <Link to="/" className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</Link>
               <Link to="/about" className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">About</Link>
               <Link to="/contact" className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Contact</Link>
+              <Link to="/blog" className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Blog</Link>
             </div>
           </div>
         )}
@@ -949,7 +964,8 @@ const Footer = () => {
               <li><Link to="/" className="text-white hover:text-gray-200 transition-colors duration-200">Home</Link></li>
               <li><Link to="/about" className="text-white hover:text-gray-200 transition-colors duration-200">About</Link></li>
               <li><Link to="/contact" className="text-white hover:text-gray-200 transition-colors duration-200">Contact</Link></li>
-              <li><Link to="/privacy" className="text-white hover:text-gray-200 transition-colors duration-200">Privacy Policy</Link></li>
+              <li><Link to="/blog" className="text-white hover:text-gray-200 transition-colors duration-200">Blog</Link></li>
+              <li><Link to="/privacy-policy" className="text-white hover:text-gray-200 transition-colors duration-200">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -1021,6 +1037,8 @@ function App() {
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/help-center" element={<HelpCenter />} />
                   <Route path="/report-issue" element={<ReportIssue />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/admin" element={<AdminPanel />} />
                 </Routes>
               </Suspense>

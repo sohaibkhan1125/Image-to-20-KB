@@ -12,6 +12,7 @@ const AppearanceManagement = lazy(() => import('./AppearanceManagement'));
 const FooterManagement = lazy(() => import('./FooterManagement'));
 const ContentManagement = lazy(() => import('./ContentManagement'));
 const HeroSectionManagement = lazy(() => import('./HeroSectionManagement'));
+const BlogManagement = lazy(() => import('./BlogManagement'));
 
 const TabLoader = () => (
   <div className="flex justify-center items-center h-64">
@@ -57,6 +58,8 @@ const AdminPanel = () => {
         return <ContentManagement />;
       case 'hero':
         return <HeroSectionManagement />;
+      case 'blog':
+        return <BlogManagement />;
       default:
         return <GeneralSettings />;
     }

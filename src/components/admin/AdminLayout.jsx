@@ -21,6 +21,7 @@ const AdminLayout = ({ children, user, currentPage, setCurrentPage }) => {
     { name: 'Footer Management', icon: '🔗', page: 'footer' },
     { name: 'Hero Section Management', icon: '🚀', page: 'hero' },
     { name: 'Content Management', icon: '📝', page: 'content' },
+    { name: 'Blog Management', icon: '📰', page: 'blog' },
   ];
 
   return (
