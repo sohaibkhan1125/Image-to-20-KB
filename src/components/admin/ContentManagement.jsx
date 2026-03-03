@@ -180,7 +180,7 @@ const ContentManagement = () => {
             clearInterval(autoSaveInterval);
             // Cleanup logic if needed, but Quill instance persist usually fine in this scope
         };
-    }, [handleAutoSave, loadContent, updateStats]);
+    }, [handleAutoSave, loadContent, updateStats, imageHandler]);
 
 
 
