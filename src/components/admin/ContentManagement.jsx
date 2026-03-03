@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import Prism from 'prismjs';
@@ -95,7 +95,7 @@ const ContentManagement = () => {
             clearInterval(autoSaveInterval);
             // Cleanup logic if needed, but Quill instance persist usually fine in this scope
         };
-    }, []);
+    }, [handleAutoSave, loadContent, updateStats]);
 
     const imageHandler = () => {
         if (fileInputRef.current) {
@@ -123,25 +123,19 @@ const ContentManagement = () => {
         };
     };
 
-    const updateStats = () => {
+    const updateStats = useCallback(() => {
+        if (!quillRef.current) return;
         const text = quillRef.current.getText();
         const words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
         const chars = text.length > 1 ? text.length - 1 : 0;
         setWordCount(words);
         setCharCount(chars);
-    };
+    }, []);
 
-    const loadContent = async () => {
+    const loadContent = useCallback(async () => {
         try {
-            // Replace localStorage with Supabase
-            // const saved = localStorage.getItem('quill_editor_content');
             const saved = await getHomePageContent();
             if (saved) {
-                // Check if it's JSON (Quill Delta) or HTML string
-                // The previous implementation utilized HTML string format for Froala
-                // Quill works best with Delta but handles HTML too.
-                // Assuming saved content is HTML string from getHomePageContent
-                // Use clipboard.dangerouslyPasteHTML for HTML or root.innerHTML
                 if (quillRef.current) {
                     quillRef.current.clipboard.dangerouslyPasteHTML(saved);
                     updateStats();
@@ -151,14 +145,13 @@ const ContentManagement = () => {
             console.error("Error loading content:", error);
             triggerToast("Error loading content from server", "error");
         }
-    };
+    }, [updateStats]);
 
-    const saveContent = async (isAuto = false) => {
+    const saveContent = useCallback(async (isAuto = false) => {
         if (!quillRef.current) return;
 
         try {
-            const content = quillRef.current.root.innerHTML; // Save as HTML to be compatible with website display
-            // localStorage.setItem('quill_editor_content', content);
+            const content = quillRef.current.root.innerHTML;
             await saveHomePageContent(content);
 
             const now = new Date();
@@ -173,11 +166,11 @@ const ContentManagement = () => {
             console.error("Error saving content:", error);
             if (!isAuto) triggerToast("Error saving content to server", "error");
         }
-    };
+    }, []);
 
-    const handleAutoSave = () => {
+    const handleAutoSave = useCallback(() => {
         saveContent(true);
-    };
+    }, [saveContent]);
 
     // Text to Code Logic
     const convertToCode = () => {
@@ -207,7 +200,7 @@ const ContentManagement = () => {
                 indent = indent.substring(tab.length);
             }
             formatted += indent + '<' + element + '>\r\n';
-            if (element.match(/^<?\w[^>]*[^\/]$/) && !element.startsWith("input") && !element.startsWith("img") && !element.startsWith("br")) {
+            if (element.match(/^<?\w[^>]*[^/]$/) && !element.startsWith("input") && !element.startsWith("img") && !element.startsWith("br")) {
                 indent += tab;
             }
         });

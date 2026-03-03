@@ -10,14 +10,12 @@ const GeneralSettings = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
 
   // Load settings from Firestore on component mount
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        setInitialLoading(true);
         const data = await getGeneralSettings();
         if (data) {
           setSettings(prev => ({ ...prev, ...data }));
@@ -26,7 +24,7 @@ const GeneralSettings = () => {
         console.error('Error loading settings:', error);
         setMessage('Error loading settings. Please refresh the page.');
       } finally {
-        setInitialLoading(false);
+        // Handled by local state if needed, but not used here
       }
     };
 

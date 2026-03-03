@@ -17,7 +17,6 @@ import { getFooterLinks, saveFooterLinks } from '../../supabaseService';
 
 const FooterManagement = () => {
   const [socialMediaLinks, setSocialMediaLinks] = useState([]);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [newLink, setNewLink] = useState({
@@ -74,14 +73,13 @@ const FooterManagement = () => {
   useEffect(() => {
     const loadSocialMediaLinks = async () => {
       try {
-        setInitialLoading(true);
         const links = await getFooterLinks();
         setSocialMediaLinks(links);
       } catch (error) {
         console.error('Error loading social media links:', error);
         setMessage('Error loading social media links. Please refresh the page.');
       } finally {
-        setInitialLoading(false);
+        // Handled by local state if needed, but not used here
       }
     };
 

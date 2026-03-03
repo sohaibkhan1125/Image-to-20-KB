@@ -10,7 +10,6 @@ const BrandingManagement = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [logoPreview, setLogoPreview] = useState('');
 
@@ -18,7 +17,6 @@ const BrandingManagement = () => {
   useEffect(() => {
     const loadBranding = async () => {
       try {
-        setInitialLoading(true);
         const data = await getBranding();
         if (data) {
           setBranding(prev => ({ ...prev, ...data }));
@@ -30,7 +28,7 @@ const BrandingManagement = () => {
         console.error('Error loading branding settings:', error);
         setMessage('Error loading branding settings. Please refresh the page.');
       } finally {
-        setInitialLoading(false);
+        // Handled by local state if needed, but not used here
       }
     };
 

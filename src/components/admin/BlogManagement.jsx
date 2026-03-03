@@ -7,7 +7,7 @@ import {
     updateBlog,
     deleteBlog
 } from '../../services/blogService';
-import { FaEdit, FaTrash, FaPlus, FaTimes, FaSave, FaEye } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaTimes, FaSave } from 'react-icons/fa';
 
 const BlogManagement = () => {
     const [blogs, setBlogs] = useState([]);
